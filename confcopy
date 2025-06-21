@@ -26,14 +26,10 @@ nixpkgs.config.packageOverrides = pkgs: {
   ];
   users.users.istipisti113 = {
     isNormalUser = true;
-    extraGroups = ["wheel"];
+    extraGroups = ["wheel" "networkmanager" "bluetooth"];
   };
   home-manager.backupFileExtension = "backup";
-  home-manager.users.istipisti113 = { pkgs, ... }: {
-    home.packages = [pkgs.atool pkgs.httpie ];
-    programs.zsh.enable = true;
-    home.stateVersion = "25.05";
-  };
+  #home-manager.users.istipisti113 = import /home/istipisti113/.config/home-manager/home.nix;
 #}
 #{
   #imports =
@@ -105,6 +101,7 @@ nixpkgs.config.packageOverrides = pkgs: {
   hyprpaper
   hyprland
   sway
+  tidal-hifi
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
   ];
@@ -124,6 +121,8 @@ nixpkgs.config.packageOverrides = pkgs: {
   #symlink ha nem mukodik (  ln -sf from to (filenevvel egyutt))
 
   services.udev.packages = with pkgs; [via];
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

@@ -73,6 +73,7 @@
     alacritty
     waybar
     wofi
+    pavucontrol
   ];
 
 
