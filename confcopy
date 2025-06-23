@@ -102,8 +102,11 @@ nixpkgs.config.packageOverrides = pkgs: {
   hyprland
   sway
   tidal-hifi
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+  transmission-qt
+  vlc
+  obsidian
+  jq
+  cargo
   ];
   programs.hyprland.enable = true;
   programs.zsh.enable = true;
@@ -117,11 +120,14 @@ nixpkgs.config.packageOverrides = pkgs: {
   set expandtab
   set number
   set relativenumber
+  nnoremap } {
+  nnoremap { }
   ";
   #symlink ha nem mukodik (  ln -sf from to (filenevvel egyutt))
 
   services.udev.packages = with pkgs; [via];
   hardware.bluetooth.enable = true;
+  hardware.keyboard.qmk.enable = true;
   services.blueman.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

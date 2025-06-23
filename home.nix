@@ -22,8 +22,10 @@
           "${mod}+q" = "kill";
 
           #movement
-          "${mod}+l" = "focus right";
-          "${mod}+h" = "focus left";
+          "${mod}+l" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh next'";
+          "${mod}+h" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh prev'";
+          "${mod}+u" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh mprev'";
+          "${mod}+i" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh mnext'";
           "${mod}+k" = "focus up";
           "${mod}+j" = "focus down";
 
@@ -31,18 +33,17 @@
           "${mod}+Shift+l" = "move right";
           "${mod}+Shift+k" = "move up";
           "${mod}+Shift+j" = "move down";
-	  
-	}
+        }
       ];
       output = {
         eDP-1 = {
-	  scale = "1";
-	  position = "0 0";
-	};
-	HDMI-A-1 = {
-	  scale = "1";
-	  position = "1920 0";
-	};
+          scale = "1";
+	        position = "0 0";
+	      };
+	      HDMI-A-1 = {
+	        scale = "1";
+	        position = "1920 0";
+	      };
       };
       workspaceOutputAssign = [
       { workspace = "6"; output = "HDMI-A-1"; }
@@ -98,7 +99,7 @@
 	  default = "ddg";
         };
 	extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-	  ublock-origin vimium darkreader
+	  ublock-origin vimium darkreader sponsorblock
 	];
       };
     };
@@ -116,5 +117,13 @@
         "HDMI-A-1" = [6 7 8 9 10];
       };
     };
+    extraConfig = ''
+      "sway/workspaces" :{
+        "persistent-workspaces":{
+          "eDP-1": [1,2,3,4,5],
+          "HDMI-A-1": [6,7,8,9,10]
+        }
+      },
+    '';
   };
 }

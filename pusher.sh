@@ -1,2 +1,2 @@
-cp $(readlink configuration.nix) confcopy
-git push
+cp $(readlink configuration.nix) confcopy.nix
+
