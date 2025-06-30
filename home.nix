@@ -29,9 +29,11 @@
 
           "${mod}+Shift+l" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh movenext'";
           "${mod}+Shift+h" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh moveprev'";
+          "${mod}+Shift+u" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh movemprev'";
+          "${mod}+Shift+i" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh movemnext'";
 
-          "${mod}+k" = "focus up";
-          "${mod}+j" = "focus down";
+          "${mod}+k" = "focus right";
+          "${mod}+j" = "focus left";
         }
       ];
       output = {
@@ -90,9 +92,9 @@
         id = 0;
 	name = "Default";
 	isDefault = true;
-	settings = {
-	  "browser.startup.homepage" = "https://duckduckgo.com";
-	};
+	#settings = {
+	#  "browser.startup.homepage" = "https://duckduckgo.com";
+	#};
 	search = {
 	  force = true;
 	  default = "ddg";
