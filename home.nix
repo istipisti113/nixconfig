@@ -87,6 +87,8 @@
     solana-cli
     anchor
     rustup
+		tree-sitter
+		nodejs
   ];
 
 
@@ -139,27 +141,91 @@
       },
     '';
   };
+
 programs.neovim = {
   enable = true;
+	extraPackages = with pkgs; [rust-analyzer telescope ripgrep fd ];
   plugins = with pkgs.vimPlugins; [
     nvim-lspconfig
+		nvim-treesitter.withAllGrammars
+		nvim-cmp cmp-nvim-lsp cmp-buffer cmp-path cmp_luasnip nvim-lspconfig
+		lazy-nvim
   ];
+
   extraLuaConfig = ''
+		vim.g.mapleader = " "
     vim.opt.tabstop = 2
     vim.opt.shiftwidth = 2
     vim.wo.number = true
     vim.wo.relativenumber = true
 		vim.keymap.set('n', '{', '}', {noremap = true})
 		vim.keymap.set('n', '}', '{', {noremap = true})
-    require'lspconfig'.rust_analyzer.setup{
-      settings = {
-        ['rust-analyzer'] = {
-          diagnostics = {
-            enable = false;
-          }
-        }
-      }
+		vim.keymap.set('n', 'j', 'gj', {noremap = true})
+		vim.keymap.set('n', 'k', 'gk', {noremap = true})
+		vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>lua vim.diagnostic.open_float()<CR>', {noremap = true, silent=true})
+		--vim.api.nvim_set_keymap('n', '<leader>dd', '<cmd>Telescope diagnostics<CR>', { noremap = true, silent = true })
+    require('lspconfig').rust_analyzer.setup{
+			--capabilities = require('cmp_nvim_lsp').default_capabilities()
+      --settings = {
+      --  ['rust-analyzer'] = {
+      --    diagnostics = {
+      --      enable = true;
+      --    }
+      --  }
+      --}
     }  
+		vim.cmd([[filetype plugin indent on]])
+		vim.cmd([[syntax enable]])
+
+   --   	require('nvim-treesitter.configs').setup {
+   -- 	    parser_install_dir = vim.fn.stdpath("data") .. "/treesitterParsers",
+   --   	  ensure_installed = { "c", "lua", "python", "rust"}, -- replace with your languages
+   --   	  highlight = {
+   --   	    enable = true,
+   --   	    additional_vim_regex_highlighting = false,
+   --   	  },
+   --   	}
+
+		--require("lazy").setup({
+  	--	{
+  	--	  "nvim-treesitter/nvim-treesitter",
+  	--	  build = ":TSUpdate",
+  	--	  parser_install_dir = "/home/istipisti113/treesitterParsers",
+  	--	  config = function()
+  	--	    require("nvim-treesitter.configs").setup({
+  	--	      parser_install_dir = "/home/istipisti113/treesitterParsers",
+  	--	      ensure_installed = { "lua", "python", "c", "rust" },
+  	--	      sync_install = false,
+  	--	      auto_install = true,
+  	--	      highlight = {
+  	--	        enable = true,
+  	--	        additional_vim_regex_highlighting = false,
+  	--	      },
+  	--	    })
+  	--	  end,
+  	--	  lazy = false,  -- load immediately
+  	--	},
+		--})
+
+		local cmp = require'cmp'
+		cmp.setup = {
+			snippet = {
+				expand = function(args)
+					require'luasnip'.lsp_expand(args.body)
+				end,
+			},
+			mapping = cmp.mapping.preset.insert({
+				['<Tab>'] = cmp.mapping.select_next_item(),
+        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+			}),
+			sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+      }, {
+        { name = 'buffer' },
+      })
+		}
   '';
 };
 # ln -sf /home/istipisti113/.config/nvim/init.lua /root/.config/nvim/init.lua
