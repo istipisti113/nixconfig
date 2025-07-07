@@ -7,12 +7,14 @@
 let
 home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
 nurpkgs = import (builtins.fetchTarball {
-    url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
-  }) { inherit pkgs; };
+   url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
+}) { inherit pkgs; };
+
 in{
 
 #nixpkgs.overlays = [nurpkgs.overlay];
-nixpkgs.config.packageOverrides = pkgs: {
+
+  nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/main.tar.gz") {
       inherit pkgs;
     };
@@ -26,7 +28,7 @@ nixpkgs.config.packageOverrides = pkgs: {
   ];
   users.users.istipisti113 = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "bluetooth"];
+    extraGroups = ["wheel" "input" "networkmanager" "bluetooth"];
   };
   home-manager.backupFileExtension = "backup";
   #home-manager.users.istipisti113 = import /home/istipisti113/.config/home-manager/home.nix;
@@ -108,6 +110,15 @@ nixpkgs.config.packageOverrides = pkgs: {
   jq
   cargo
   steam
+  prusa-slicer
+  curl
+  unzip
+  zip
+  android-studio
+  wine
+  lshw
+  gcc
+  clang
   ];
 
   programs.steam = {
@@ -125,20 +136,22 @@ nixpkgs.config.packageOverrides = pkgs: {
     xwayland.enable = true;
   };
 
-  environment.etc."nvim/init.vim".text = "
-  set tabstop=2
-  set shiftwidth=2
-  set expandtab
-  set number
-  set relativenumber
-  nnoremap } {
-  nnoremap { }
-  ";
-  #symlink ha nem mukodik (  ln -sf from to (filenevvel egyutt))
-
-  services.udev.packages = with pkgs; [via];
+  services.udev.packages = with pkgs; [via oversteer];
   hardware.bluetooth.enable = true;
   hardware.keyboard.qmk.enable = true;
+  hardware.graphics.enable = true;
+  hardware.nvidia = {
+    modesetting.enable = true;
+    nvidiaSettings = true;
+    prime = {
+      sync.enable = true;
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
+  #hardware.nvidia.open = true;
+  #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+  #services.xserver.videoDrivers = [ "nvidia" ]; 
   services.blueman.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -167,5 +180,14 @@ nixpkgs.config.packageOverrides = pkgs: {
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
 
-
+  specialisation = {
+  on-the-go.configuration = {
+    system.nixos.tags = [ "on-the-go" ];
+    hardware.nvidia = {
+      prime.offload.enable = lib.mkForce true;
+      prime.offload.enableOffloadCmd = lib.mkForce true;
+      prime.sync.enable = lib.mkForce false;
+    };
+  };
+};
 }

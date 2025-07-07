@@ -2,7 +2,12 @@
   with lib;
   let 
   mod = "Mod4";
+   #nur = import (builtins.fetchTarball {
+   # url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
+    # pin with sha256 for less frequent downloads
+  #}) { inherit pkgs; };
   in {
+  #nixpkgs.overlays = [ nur.overlay ];
   #sway config
   wayland.windowManager.sway = {
     enable = true;
@@ -66,6 +71,7 @@
   home.username = "istipisti113";
   home.homeDirectory = "/home/istipisti113";
   home.stateVersion = "25.05";
+  home.sessionPath = ["$HOME/.cargo/bin/"];
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
@@ -76,6 +82,11 @@
     waybar
     wofi
     pavucontrol
+    exercism
+    oversteer
+    solana-cli
+    anchor
+    rustup
   ];
 
 
@@ -106,6 +117,7 @@
     };
   };
 
+
   programs.waybar.settings = {
     enable = true;
     position = "top";
@@ -127,4 +139,29 @@
       },
     '';
   };
+programs.neovim = {
+  enable = true;
+  plugins = with pkgs.vimPlugins; [
+    nvim-lspconfig
+  ];
+  extraLuaConfig = ''
+    vim.opt.tabstop = 2
+    vim.opt.shiftwidth = 2
+    vim.wo.number = true
+    vim.wo.relativenumber = true
+		vim.keymap.set('n', '{', '}', {noremap = true})
+		vim.keymap.set('n', '}', '{', {noremap = true})
+    require'lspconfig'.rust_analyzer.setup{
+      settings = {
+        ['rust-analyzer'] = {
+          diagnostics = {
+            enable = false;
+          }
+        }
+      }
+    }  
+  '';
+};
+# ln -sf /home/istipisti113/.config/nvim/init.lua /root/.config/nvim/init.lua
+# setting the config for root with symlink
 }
