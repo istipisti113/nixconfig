@@ -98,7 +98,6 @@
     nixd
   ];
 
-
   #program configs
   programs.git = {
     enable = true;
@@ -150,6 +149,9 @@
   };
 
 programs.nixvim = {
+  imports = [
+    /home/istipisti113/.config/home-manager/nixvim
+  ];
   enable = true;
   defaultEditor = true;
   viAlias = true;
@@ -157,7 +159,13 @@ programs.nixvim = {
   opts = {
     number = true;
     relativenumber = true;
-    shiftwidth = 2;
+    shiftwidth = 4;
+    expandtab = true;
+    smartindent = true;
+    undofile = true;
+    termguicolors = true;
+    signcolumn = "yes";
+    scrolloff = 8;
   };
 
   keymaps = [
@@ -170,6 +178,7 @@ programs.nixvim = {
       action = "{";
     }
   ];
+  colorschemes.tokyonight.enable = true;
 
   plugins = {
     treesitter = {
@@ -196,6 +205,7 @@ programs.nixvim = {
       lintersByFt = {
 	lua = ["luacheck"];
 	nix = ["nix"];
+        rust = ["rust-analyzer"];
       };
     };
   };
