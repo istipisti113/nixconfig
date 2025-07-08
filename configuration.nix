@@ -11,6 +11,7 @@ nurpkgs = import (builtins.fetchTarball {
 }) { inherit pkgs; };
 
 in{
+	nix.settings.experimental-features = ["nix-command" "flakes"];
 
 #nixpkgs.overlays = [nurpkgs.overlay];
 
@@ -28,7 +29,7 @@ in{
   ];
   users.users.istipisti113 = {
     isNormalUser = true;
-    extraGroups = ["wheel" "input" "networkmanager" "bluetooth"];
+    extraGroups = ["wheel" "input" "networkmanager" "bluetooth" "adbusers"];
   };
   home-manager.backupFileExtension = "backup";
   #home-manager.users.istipisti113 = import /home/istipisti113/.config/home-manager/home.nix;
@@ -119,6 +120,7 @@ in{
   lshw
   gcc
   clang
+	rust-analyzer
   ];
 
   programs.steam = {
@@ -179,6 +181,9 @@ in{
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
+
+	programs.nix-ld.enable = true;
+	programs.adb.enable = true;
 
   specialisation = {
   on-the-go.configuration = {
