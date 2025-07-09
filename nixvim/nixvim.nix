@@ -1,72 +1,94 @@
 {options, config, pkgs, lib, ... }:
 {
-    imports = [
-      /home/istipisti113/.config/home-manager/nixvim/cmp.nix
-    ];
-    enable = true;
-    highlight.ExtraWhitespace.bg = "red";
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-    opts = {
-      number = true;
-      relativenumber = true;
-      shiftwidth = 2;
-      expandtab = true;
-      smartindent = true;
-      undofile = true;
-      termguicolors = true;
-      signcolumn = "yes";
-      scrolloff = 8;
-    };
+  globals.mapleader = " ";
+  imports = [
+    /home/istipisti113/.config/home-manager/nixvim/cmp.nix
+    #/home/istipisti113/.config/home-manager/nixvim/blink.nix
+  ];
+  enable = true;
+  highlight.ExtraWhitespace.bg = "red";
+  defaultEditor = true;
+  viAlias = true;
+  vimAlias = true;
+  opts = {
+    number = true;
+    relativenumber = true;
+    shiftwidth = 2;
+    expandtab = true;
+    smartindent = true;
+    undofile = true;
+    termguicolors = true;
+    signcolumn = "yes";
+    scrolloff = 8;
+  };
 
-    keymaps = [
-      {
-        key = "{";
-        action = "}";
-      }
-      {
-        key = "}";
-        action = "{";
-      }
-    ];
-    colorschemes.tokyonight.enable = false;
-    colorschemes.catppuccin.enable = true;
+  keymaps = [
+    {
+      key = "{";
+      action = "}";
+    }
+    {
+      key = "}";
+      action = "{";
+    }
+  ];
+  colorschemes.tokyonight.enable = false;
+  colorschemes.catppuccin.enable = true;
 
-    plugins = {
-      treesitter = {
-        enable = true;
-        settings.indent.enable = true;
-        settings.highlight.enable = true;
-      };
-      cmp.enable = true;
-      lualine.enable = true;
-      lsp.servers = {
-        rust_analyzer = {
-          enable = true;
-          autostart = true;
-          installCargo = true;
-          installRustc = true;
+  plugins = {
+    fugitive.enable = true;
+    web-devicons.enable = true;
+    telescope = {
+      enable = true;
+      keymaps = {
+        "<leader>tf" = {
+          action = "find_files";
+          options.desc = "find files";
         };
-        lua_ls.enable = true;
-        lua_ls.autostart = true;
-        nixd.enable = true;
-        nixd.autostart = true;
-      };
-      lint = {
-        enable = true;
-        lintersByFt = {
-          lua = ["luacheck"];
-          nix = ["nix"];
-          rust = ["rust-analyzer"];
+        "<leader>tF" = {
+          action = "find_files";
+          options.desc = "find hidden files";
+        };
+        "<leader>to" = {
+          action = "oldfiles";
+          options.desc = "find hidden files";
         };
       };
     };
 
-    extraPlugins = with pkgs.vimPlugins; [
-      nvim-lspconfig
-    ];
-    extraConfigLua = ''
+    treesitter = {
+      enable = true;
+      settings.indent.enable = true;
+      settings.highlight.enable = true;
+    };
+    cmp.enable = true;
+    lualine.enable = true;
+    lsp.servers = {
+      rust_analyzer = {
+        enable = true;
+        autostart = true;
+        installCargo = true;
+        installRustc = true;
+      };
+      lua_ls.enable = true;
+      lua_ls.autostart = true;
+      nixd.enable = true;
+      nixd.autostart = true;
+    };
+    lint = {
+      enable = true;
+      lintersByFt = {
+        lua = ["luacheck"];
+        nix = ["nix"];
+        rust = ["rust-analyzer"];
+      };
+    };
+  };
+
+  extraPlugins = with pkgs.vimPlugins; [
+    nvim-lspconfig
+  ];
+  extraConfigLua = ''
   local function set_cmn_lsp_keybinds()
     local lsp_keybinds = {
       {

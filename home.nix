@@ -133,9 +133,10 @@ in {
 
   programs.waybar.settings = {
     enable = true;
-    position = "top";
+    position = "bottom";
     modules-left = [ "sway/workspaces" "sway/mode" "sway/window" ];
-    modules-right = [ "clock" ];
+    modules-center = [ "clock" ];
+    modules-right = [  ];
     "sway/workspaces" = {
       all-outputs = true;
       persistent_workspaces = {
