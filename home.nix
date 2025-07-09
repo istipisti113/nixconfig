@@ -105,6 +105,9 @@ in {
     enable = true;
     userName = "Szabo Istvan";
     userEmail = "pisti4395@gmail.com";
+    extraConfig = {
+      credential.helper = "${pkgs.git.override { withLibsecret = true;}}/bin/git-credential-libsecret";
+    };
   };
   programs.firefox ={
     enable = true;
