@@ -31,6 +31,12 @@
       key = "}";
       action = "{";
     }
+    {
+      key = "<leader>d";
+      lua = true;
+      action = "vim.diagnostic.open_float";
+      mode = "n";
+    }
   ];
   colorschemes.tokyonight.enable = false;
   colorschemes.catppuccin.enable = true;
