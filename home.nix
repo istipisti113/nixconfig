@@ -83,6 +83,7 @@ in {
     htop
     fortune
     git
+    git-credential-manager
     alacritty
     waybar
     wofi
@@ -110,8 +111,9 @@ in {
       credential = {
         #credentialStore = "secretservice";
         #helper = "${nur.repos.utybo.git-credential-manager}/bin/git-credential-manager-core";
-        helper = "libsecret";
+        helper = "manager";
         "https://github.com".username = "istipisti113";
+        credentialStore = "cache";
       };
     };
   };
