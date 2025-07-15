@@ -112,7 +112,8 @@ in {
         #helper = "${nur.repos.utybo.git-credential-manager}/bin/git-credential-manager-core";
         helper = "manager";
         "https://github.com".username = "istipisti113";
-        credentialStore = "cache";
+        "https://github.com".password = "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";
+        cr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edentialStore = "cache";
       };
     };
   };
