@@ -1,4 +1,4 @@
-{options, config, pkgs, lib, ... }:
+{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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options, config, pkgs, lib, ... }:
 with lib;
 let 
   mod = "Mod4";
@@ -6,10 +6,10 @@ let
     url = "https://github.com/nix-community/nixvim";
     # When using a different channel you can use `ref = "nixos-<version>"` to set it here
   });
-  #nur = import (builtins.fetchTarball {
-  # url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
-  # pin with sha256 for less frequent downloads
-  #}) { inherit pkgs; };
+  nur = import (builtins.fetchTarball {
+   url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
+    #pin with sha256 for less frequent downloads
+  }) { inherit pkgs; };
 in {
   #nixpkgs.overlays = [ nur.overlay ];
   #sway config
@@ -106,9 +106,17 @@ in {
     userName = "Szabo Istvan";
     userEmail = "pisti4395@gmail.com";
     extraConfig = {
-      credential.helper = "${pkgs.git.override { withLibsecret = true;}}/bin/git-credential-libsecret";
+      #credential.helper = "${pkgs.git.override { withLibsecret = true;}}/bin/git-credential-libsecret";
+      credential = {
+        #credentialStore = "secretservice";
+        #helper = "${nur.repos.utybo.git-credential-manager}/bin/git-credential-manager-core";
+        helper = "manager";
+        "https://github.com".username = "istipisti113";
+        credentialStore = "cache";
+      };
     };
   };
+
   programs.firefox ={
     enable = true;
     profiles = {
