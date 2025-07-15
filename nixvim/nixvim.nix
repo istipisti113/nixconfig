@@ -36,6 +36,7 @@
   colorschemes.catppuccin.enable = true;
 
   plugins = {
+    flutter-tools.enable = true;
     fugitive.enable = true;
     web-devicons.enable = true;
     telescope = {
@@ -81,12 +82,14 @@
         lua = ["luacheck"];
         nix = ["nix"];
         rust = ["rust-analyzer"];
+        dart = ["flutter-tools"];
       };
     };
   };
 
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
+    flutter-tools-nvim
   ];
   extraConfigLua = ''
   local function set_cmn_lsp_keybinds()
@@ -182,5 +185,6 @@
       set_cmn_lsp_keybinds()
     end,
   })
+  require("flutter-tools").setup()
   '';
 }
