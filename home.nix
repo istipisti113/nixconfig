@@ -110,9 +110,8 @@ in {
       credential = {
         #credentialStore = "secretservice";
         #helper = "${nur.repos.utybo.git-credential-manager}/bin/git-credential-manager-core";
-        helper = "manager";
+        helper = "libsecret";
         "https://github.com".username = "istipisti113";
-        cr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edentialStore = "cache";
       };
     };
   };
