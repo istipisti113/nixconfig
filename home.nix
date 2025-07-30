@@ -13,6 +13,7 @@ let
 in {
   #nixpkgs.overlays = [ nur.overlay ];
   #sway config
+  home.file."0256.jpg".source = /home/istipisti113/.config/home-manager/0256.jpg;
   imports = [nixvim.homeManagerModules.nixvim];
   wayland.windowManager.sway = {
     enable = true;
@@ -99,6 +100,11 @@ in {
     nixd
     chromium
     qmk
+    swaybg
+    qutebrowser
+    freecad
+    elf2uf2-rs
+    nautilus
   ];
 
   #program configs
@@ -140,27 +146,30 @@ in {
   };
 
 
-  programs.waybar.settings = {
+  programs.waybar = {
     enable = true;
-    position = "bottom";
-    modules-left = [ "sway/workspaces" "sway/mode" "sway/window" ];
-    modules-center = [ "clock" ];
-    modules-right = [  ];
-    "sway/workspaces" = {
-      all-outputs = true;
-      persistent_workspaces = {
-        "eDP-1" = [1 2 3 4 5];
-        "HDMI-A-1" = [6 7 8 9 10];
+    settings = {
+      mainBar = {
+        position = "top";
+        modules-left = [ "sway/workspaces" "sway/mode" "sway/window" ];
+        modules-center = [ "clock" ];
+        modules-right = [ "tray" "battery" "pulseaudio" "backlight" ];
+        "sway/workspaces" = {
+          persistent_workspaces = {
+            "eDP-1" = [1 2 3 4 5];
+            "HDMI-A-1" = [6 7 8 9 10];
+          };
+        };
+        extraConfig = ''
+        "sway/workspaces" :{
+          "persistent-workspaces":{
+            "eDP-1": [1,2,3,4,5],
+            "HDMI-A-1": [6,7,8,9,10]
+          }
+        },
+        '';
       };
     };
-    extraConfig = ''
-      "sway/workspaces" :{
-        "persistent-workspaces":{
-          "eDP-1": [1,2,3,4,5],
-          "HDMI-A-1": [6,7,8,9,10]
-        }
-      },
-    '';
   };
 
   programs.nixvim = {
@@ -169,7 +178,7 @@ in {
 
   programs.neovim = {
     enable = true;
-    extraPackages = with pkgs; [rust-analyzer telescope ripgrep fd ];
+    extraPackages = with pkgs; [ telescope ripgrep fd ];
     plugins = with pkgs.vimPlugins; [
       nvim-lspconfig
       nvim-cmp cmp-nvim-lsp cmp-buffer cmp-path cmp_luasnip nvim-lspconfig

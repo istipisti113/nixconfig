@@ -11,6 +11,8 @@
   viAlias = true;
   vimAlias = true;
   opts = {
+    cursorline=true;
+    cursorcolumn=true;
     number = true;
     relativenumber = true;
     shiftwidth = 2;
@@ -38,8 +40,8 @@
       mode = "n";
     }
   ];
-  colorschemes.tokyonight.enable = false;
-  colorschemes.catppuccin.enable = true;
+  colorschemes.tokyonight.enable = true;
+  colorschemes.catppuccin.enable = false;
 
   plugins = {
     flutter-tools.enable = true;
@@ -76,6 +78,9 @@
         autostart = true;
         installCargo = true;
         installRustc = true;
+        settings = {
+          checkOnSave.command = "clippy";
+        };
       };
       lua_ls.enable = true;
       lua_ls.autostart = true;
@@ -87,7 +92,7 @@
       lintersByFt = {
         lua = ["luacheck"];
         nix = ["nix"];
-        rust = ["rust-analyzer"];
+        #rust = ["rust-analyzer"];
         dart = ["flutter-tools"];
       };
     };
