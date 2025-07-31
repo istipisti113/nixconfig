@@ -105,9 +105,12 @@ in {
     freecad
     elf2uf2-rs
     nautilus
+    prismlauncher
   ];
 
   #program configs
+  #programs.prismlauncher.enable = true;
+
   programs.git = {
     enable = true;
     userName = "Szabo Istvan";
