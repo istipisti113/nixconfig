@@ -5,15 +5,15 @@
 { config, pkgs, lib, ... }:
 
 let
-home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
-nurpkgs = import (builtins.fetchTarball {
-   url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
-}) { inherit pkgs; };
+  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
+  nurpkgs = import (builtins.fetchTarball {
+    url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
+  }) { inherit pkgs; };
 
 in{
-	nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
-#nixpkgs.overlays = [nurpkgs.overlay];
+  #nixpkgs.overlays = [nurpkgs.overlay];
 
   nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/main.tar.gz") {
@@ -23,25 +23,27 @@ in{
 
 
   imports = 
-  [
-    (import "${home-manager}/nixos")
+    [
+      (import "${home-manager}/nixos")
       ./hardware-configuration.nix
-  ];
+    ];
   users.users.istipisti113 = {
     isNormalUser = true;
     extraGroups = ["wheel" "input" "networkmanager" "bluetooth" "adbusers"];
   };
   home-manager.backupFileExtension = "backup";
   #home-manager.users.istipisti113 = import /home/istipisti113/.config/home-manager/home.nix;
-#}
-#{
+  #}
+  #{
   #imports =
-   # [ # Include the results of the hardware scan.
-    #];
+  # [ # Include the results of the hardware scan.
+  #];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.resumeDevice = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";
+  swapDevices = [{device = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";}];
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -78,15 +80,15 @@ in{
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-#  users.users.istipisti113 = {
-#    isNormalUser = true;
-#    description = "Szabo Istvan";
-#    extraGroups = [ "networkmanager" "wheel" ];
-#    packages = with pkgs; [
-#      zsh
-#    ];
-#    shell = pkgs.zsh;
-#  };
+  #  users.users.istipisti113 = {
+  #    isNormalUser = true;
+  #    description = "Szabo Istvan";
+  #    extraGroups = [ "networkmanager" "wheel" ];
+  #    packages = with pkgs; [
+  #      zsh
+  #    ];
+  #    shell = pkgs.zsh;
+  #  };
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
@@ -96,31 +98,31 @@ in{
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  neovim
-  alacritty
-  waybar
-  wofi
-  firefox
-  hyprpaper
-  hyprland
-  sway
-  tidal-hifi
-  transmission-qt
-  vlc
-  obsidian
-  jq
-  cargo
-  steam
-  prusa-slicer
-  curl
-  unzip
-  zip
-  android-studio
-  wine
-  lshw
-  gcc
-  clang
-	rust-analyzer
+    neovim
+    alacritty
+    waybar
+    wofi
+    firefox
+    hyprpaper
+    hyprland
+    sway
+    tidal-hifi
+    transmission-qt
+    vlc
+    obsidian
+    jq
+    cargo
+    steam
+    prusa-slicer
+    curl
+    unzip
+    zip
+    android-studio
+    wine
+    lshw
+    gcc
+    clang
+    rust-analyzer
   ];
 
   programs.steam = {
@@ -162,7 +164,7 @@ in{
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-    
+
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
@@ -182,17 +184,17 @@ in{
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
 
-	programs.nix-ld.enable = true;
-	programs.adb.enable = true;
+  programs.nix-ld.enable = true;
+  programs.adb.enable = true;
 
   specialisation = {
-  on-the-go.configuration = {
-    system.nixos.tags = [ "on-the-go" ];
-    hardware.nvidia = {
-      prime.offload.enable = lib.mkForce true;
-      prime.offload.enableOffloadCmd = lib.mkForce true;
-      prime.sync.enable = lib.mkForce false;
+    on-the-go.configuration = {
+      system.nixos.tags = [ "on-the-go" ];
+      hardware.nvidia = {
+        prime.offload.enable = lib.mkForce true;
+        prime.offload.enableOffloadCmd = lib.mkForce true;
+        prime.sync.enable = lib.mkForce false;
+      };
     };
   };
-};
 }
