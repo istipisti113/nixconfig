@@ -112,46 +112,27 @@ in {
     nautilus
     prismlauncher
     helix
-    vscode-html-language-server
   ];
 
   #program configs
   #programs.prismlauncher.enable = true;
   programs.helix = {
     enable = true;
+    languages = {
+      language = [{
+        name = "rust";
+        language-servers = ["rust-analyzer"];
+      }];
+    };
     settings = {
-      keys.normal = {
-        "$" = "goto_line_end";
-        esc = ["collapse_selection"];
-      };
       theme = "night_owl";
       editor = {
         line-number = "relative";
         cursorline = true;
         cursorcolumn = true;
-        cursor-shape = {
-          insert = "bar";
-        };
       };
+      
     };
-    extraConfig = ''
-      [language-server.rust-analyzer]
-      command = "rust-analyzer"
-      args = ["--stdio"]
-
-      [language-server.vscode-html-language-server]
-      command = "vscode-html-language-server"
-      args = ["--stdio"]
-
-      [[language]]
-      name = "rust"
-      language-servers = ["rust-analyzer"]
-      auto-format = true
-
-      [[language]]
-      name = "html"
-      language-servers = ["vscode-html-language-server"]
-    '';
   };
 
   programs.git = {

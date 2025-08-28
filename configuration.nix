@@ -123,7 +123,12 @@ in{
     gcc
     clang
     rust-analyzer
+    logmein-hamachi
+    tailscale
+    vscode-langservers-extracted
   ];
+  services.logmein-hamachi.enable = true;
+  services.tailscale.enable = true;
 
   programs.steam = {
     enable = true;
@@ -168,7 +173,7 @@ in{
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

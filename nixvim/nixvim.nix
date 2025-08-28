@@ -44,6 +44,7 @@
   colorschemes.catppuccin.enable = false;
 
   plugins = {
+    lsp.servers.html.enable = true;
     flutter-tools.enable = true;
     fugitive.enable = true;
     web-devicons.enable = true;
@@ -101,6 +102,9 @@
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
     flutter-tools-nvim
+  ];
+  extraPackages = with pkgs; [
+    typescript-language-server
   ];
   extraConfigLua = ''
   local function set_cmn_lsp_keybinds()
@@ -187,6 +191,9 @@
     end,
     settings = {
       ['rust-analyzer'] = {
+        diagnostics = {
+          disabled = { "unresolved-proc-macro", "unresolved-macro-call" },
+        },
         cargo = {
           allFeatures = true,
         },
@@ -196,6 +203,14 @@
       set_cmn_lsp_keybinds()
     end,
   })
+  require("lspconfig").ts_ls.setup{
+  on_attach = function(client, bufnr)
+    -- optional: keymaps, etc.
+  end,
+  flags = { debounce_text_changes = 150 },
+}
+
+  require("lspconfig").html.setup{capabilities=capabilities}
   require("flutter-tools").setup()
   '';
 }
