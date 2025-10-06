@@ -16,7 +16,7 @@ in {
   #nixpkgs.overlays = [ nur.overlay ];
   #sway config
   home.file."0256.jpg".source = /home/istipisti113/.config/home-manager/0256.jpg;
-  imports = [nixvim.homeManagerModules.nixvim];
+  imports = [nixvim.homeModules.nixvim];
   wayland.windowManager.sway = {
     enable = true;
     config = rec {
@@ -28,13 +28,14 @@ in {
       terminal = "alacritty";
       menu = "wofi --show drun";
       bars = [];
-      input."*".xkb_layout = "us";
+      input."*".xkb_layout = "hu";
+      input."65251:0:Thomas_Haukland_cheapino2_Keyboard".xkb_layout = "us";
       keybindings = lib.attrsets.mergeAttrsList  [
         #(lib.attrsets.mergeAttrsList)
         {
           "${mod}+Return" = "exec --no-startup-id alacritty";
           "${mod}+p" = "exec --no-startup-id wofi --show drun";
-          "${mod}+m" = "exec swaymsg exit";
+          "${mod}+space+m" = "exec swaymsg exit";
           "${mod}+q" = "kill";
 
           #movement
@@ -50,6 +51,12 @@ in {
 
           "${mod}+k" = "focus right";
           "${mod}+j" = "focus left";
+
+          "${mod}+space" = "exec --no-startup-id bash -c 'playerctl --player=spotify play-pause'";
+          "${mod}+right" = "exec --no-startup-id bash -c 'playerctl --player=spotify next'";
+          "${mod}+left" = "exec --no-startup-id bash -c 'playerctl --player=spotify previous'";
+          "${mod}+up" = "exec --no-startup-id bash -c 'playerctl --player=spotify volume 0.1+'";
+          "${mod}+down" = "exec --no-startup-id bash -c 'playerctl --player=spotify volume 0.1-'";
         }
       ];
       output = {
@@ -76,8 +83,9 @@ in {
         { workspace = "5"; output = "eDP-1"; }
       ];
     };
-    extraConfig = "workspace 1 output eDP-1\nworkspace 2 output eDP-1\nworkspace 6 output HDMI-A-1\nworkspace 7 output HDMI-A-1";
+    extraConfig = "workspace 1 output eDP-1\nworkspace 2 output eDP-1\nworkspace 6 output HDMI-A-1\nworkspace 7 output HDMI-A-1\ndefault_border pixel 2";
   };
+
 
   home.username = "istipisti113";
   home.homeDirectory = "/home/istipisti113";
@@ -112,8 +120,30 @@ in {
     nautilus
     prismlauncher
     helix
-    vscode-html-language-server
+    codecrafters-cli
+    rpi-imager
+    awesome
+    gimp
+    xorg.xinit
+    xorg.xauth
+    popsicle
+    usbimager
+    #dotnet-sdk
+    dotnet-sdk_9
+    devbox
+    omnisharp-roslyn
+    python314
   ];
+
+  programs.bash = {
+    initExtra = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+    then
+      shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+      exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+    fi
+    '';
+  };
 
   #program configs
   #programs.prismlauncher.enable = true;
@@ -154,6 +184,14 @@ in {
     '';
   };
 
+  programs.zsh = {
+    enable = true;
+    shellAliases = {
+      ssha = "ssh istipisti113@192.168.8.121";
+      sshat = "ssh istipisti113@100.75.107.102";
+    };
+  };
+
   programs.git = {
     enable = true;
     userName = "Szabo Istvan";
@@ -165,7 +203,7 @@ in {
         #helper = "${nur.repos.utybo.git-credential-manager}/bin/git-credential-manager-core";
         helper = "manager";
         "https://github.com".username = "istipisti113";
-        credentialStore = "cache";
+        credentialStore = "secretservice";
       };
     };
   };

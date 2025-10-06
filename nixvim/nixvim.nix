@@ -44,7 +44,6 @@
   colorschemes.catppuccin.enable = false;
 
   plugins = {
-    lsp.servers.html.enable = true;
     flutter-tools.enable = true;
     fugitive.enable = true;
     web-devicons.enable = true;
@@ -73,15 +72,18 @@
     };
     cmp.enable = true;
     lualine.enable = true;
+    lsp.enable = true;
+
     lsp.servers = {
+      html.enable = true;
+      csharp_ls.enable = true;
+      #omnisharp = {enable = true;cmd = [ "OmniSharp" "--languageserver" ];};
       rust_analyzer = {
         enable = true;
         autostart = true;
         installCargo = true;
         installRustc = true;
-        settings = {
-          checkOnSave.command = "clippy";
-        };
+        settings.checkOnSave = true;
       };
       lua_ls.enable = true;
       lua_ls.autostart = true;
@@ -166,10 +168,11 @@
         },
       },
     }
-
     for _, bind in ipairs(lsp_keybinds) do
       vim.keymap.set("n", bind.key, bind.action, bind.options)
     end
+
+    --vim.lsp.config[""]
   end
   -- Nix LSP
   require("lspconfig").nixd.setup({
@@ -184,6 +187,8 @@
       },
     },
   })
+
+
   -- Rust LSP
   require("lspconfig").rust_analyzer.setup({
     root_dir = function(fname)
@@ -203,14 +208,25 @@
       set_cmn_lsp_keybinds()
     end,
   })
-  require("lspconfig").ts_ls.setup{
-  on_attach = function(client, bufnr)
-    -- optional: keymaps, etc.
-  end,
+  --require("lspconfig").ts_ls.setup{
+  --on_attach = function(client, bufnr)
+  --  -- optional: keymaps, etc.
+  --end,
   flags = { debounce_text_changes = 150 },
-}
+  --}
 
-  require("lspconfig").html.setup{capabilities=capabilities}
+  --require("lspconfig").html.setup{capabilities=capabilities}
   require("flutter-tools").setup()
+  --Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+--require'lspconfig'.html.setup {
+--  capabilities = capabilities,
+--}
+  vim.lsp.config["html"] = {
+    capabilities = capabilities
+  }
+
   '';
 }
