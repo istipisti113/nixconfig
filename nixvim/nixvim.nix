@@ -44,9 +44,18 @@
   colorschemes.catppuccin.enable = false;
 
   plugins = {
+    autoclose.enable = true;
     flutter-tools.enable = true;
     fugitive.enable = true;
     web-devicons.enable = true;
+    #conform-nvim = {
+    #  enable = true;
+    #  settings.formatters_by_ft = {
+    #    html = [["emmet-ls"]];
+    #    css = [["emmet-ls"]];
+    #  };
+    #};
+
     telescope = {
       enable = true;
       keymaps = {
@@ -75,6 +84,9 @@
     lsp.enable = true;
 
     lsp.servers = {
+      emmet_ls = {
+        enable = true;
+      };
       html.enable = true;
       csharp_ls.enable = true;
       #omnisharp = {enable = true;cmd = [ "OmniSharp" "--languageserver" ];};
@@ -109,6 +121,8 @@
     typescript-language-server
   ];
   extraConfigLua = ''
+
+  vim.keymap.set("n", "<esc>", ":noh<CR>")
   local function set_cmn_lsp_keybinds()
     local lsp_keybinds = {
       {
@@ -171,43 +185,42 @@
     for _, bind in ipairs(lsp_keybinds) do
       vim.keymap.set("n", bind.key, bind.action, bind.options)
     end
-
-    --vim.lsp.config[""]
   end
-  -- Nix LSP
-  require("lspconfig").nixd.setup({
-    on_attach = function()
-      set_cmn_lsp_keybinds()
-    end,
+
+  vim.lsp.config("rust-analyzer", {
+    cmd = {"rust-analyzer"},
+    root_markers = {"Cargo.toml"},
+    filetypes = {"rust"},
     settings = {
-      nixd = {
-        formatting = {
-          command = { "nixfmt" },
-        },
+      diagnostics = {
+        disabled = { "unresolved-proc-macro", "unresolved-macro-call" },
       },
-    },
+      cargo = {
+        allFeatures = true,
+      },
+    }
   })
 
 
   -- Rust LSP
-  require("lspconfig").rust_analyzer.setup({
-    root_dir = function(fname)
-      return vim.loop.cwd()
-    end,
-    settings = {
-      ['rust-analyzer'] = {
-        diagnostics = {
-          disabled = { "unresolved-proc-macro", "unresolved-macro-call" },
-        },
-        cargo = {
-          allFeatures = true,
-        },
-      },
-    },
-    on_attach = function()
-      set_cmn_lsp_keybinds()
-    end,
-  })
+--;  require("lspconfig").rust_analyzer.setup({
+--;    root_dir = function(fname)
+--;      return vim.loop.cwd()
+--;    end,
+--;    settings = {
+--;      ['rust-analyzer'] = {
+--;        diagnostics = {
+--;          disabled = { "unresolved-proc-macro", "unresolved-macro-call" },
+--;        },
+--;        cargo = {
+--;          allFeatures = true,
+--;        },
+--;      },
+--;    },
+--;    on_attach = function()
+--;      set_cmn_lsp_keybinds()
+--;    end,
+--;  })
   --require("lspconfig").ts_ls.setup{
   --on_attach = function(client, bufnr)
   --  -- optional: keymaps, etc.
@@ -215,18 +228,21 @@
   flags = { debounce_text_changes = 150 },
   --}
 
-  --require("lspconfig").html.setup{capabilities=capabilities}
   require("flutter-tools").setup()
-  --Enable (broadcasting) snippet capability for completion
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
---require'lspconfig'.html.setup {
---  capabilities = capabilities,
---}
-  vim.lsp.config["html"] = {
-    capabilities = capabilities
-  }
-
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  vim.lsp.config("cssls", {
+    cmd = { "vscode-css-language-server", "--stdio" },
+    filetypes = { "css", "scss", "less" },
+    settings = {
+      css = { validate = true },
+      less = { validate = true },
+      scss = { validate = true },
+    },
+  })
+  vim.lsp.enable("cssls")
   '';
 }

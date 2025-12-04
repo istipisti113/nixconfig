@@ -7,7 +7,7 @@ let
     # When using a different channel you can use `ref = "nixos-<version>"` to set it here
   });
   nur = import (builtins.fetchTarball {
-   url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
+    url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
     #pin with sha256 for less frequent downloads
   }) { inherit pkgs; };
 in {
@@ -34,9 +34,11 @@ in {
         #(lib.attrsets.mergeAttrsList)
         {
           "${mod}+Return" = "exec --no-startup-id alacritty";
+          "${mod}+f" = "fullscreen toggle";
           "${mod}+p" = "exec --no-startup-id wofi --show drun";
           "${mod}+space+m" = "exec swaymsg exit";
           "${mod}+q" = "kill";
+          "${mod}+Shift+p" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/screenshot.sh'";
 
           #movement
           "${mod}+l" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh next'"; #workspace to workspace
@@ -109,7 +111,7 @@ in {
     rustup
     tree-sitter
     nodejs
-    flutter
+    #flutter
     nixd
     chromium
     qmk
@@ -119,9 +121,9 @@ in {
     elf2uf2-rs
     nautilus
     prismlauncher
-    helix
+    #helix
     codecrafters-cli
-    rpi-imager
+    #rpi-imager
     awesome
     gimp
     xorg.xinit
@@ -133,6 +135,19 @@ in {
     devbox
     omnisharp-roslyn
     python314
+    grim
+    slurp
+    swappy
+    appimage-run
+    unrar-free
+    winetricks
+    blender
+    libreoffice
+    lsd
+    stdenv.cc.cc.lib
+    obs-studio
+    qpwgraph
+    vesktop
   ];
 
   programs.bash = {
