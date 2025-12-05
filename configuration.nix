@@ -14,6 +14,9 @@ in{
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   #nixpkgs.overlays = [nurpkgs.overlay];
+  nixpkgs.overlays = [
+    (import ./overlays/beeper.nix)
+  ];
 
   nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/main.tar.gz") {
@@ -29,21 +32,35 @@ in{
     ];
   users.users.istipisti113 = {
     isNormalUser = true;
-    extraGroups = ["wheel" "input" "networkmanager" "bluetooth" "adbusers"];
+    extraGroups = [ "video" "wheel" "input" "networkmanager" "bluetooth" "adbusers"];
+    shell = pkgs.fish;
   };
   home-manager.backupFileExtension = "backup";
+
   #home-manager.users.istipisti113 = import /home/istipisti113/.config/home-manager/home.nix;
-  #}
-  #{
-  #imports =
-  # [ # Include the results of the hardware scan.
-  #];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.resumeDevice = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";
-  swapDevices = [{device = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";}];
+  boot.extraModulePackages = [
+    (pkgs.linuxPackages.v4l2loopback.overrideAttrs (oldAttrs: {
+      version = "0.13.2-manual";
+      src = pkgs.fetchFromGitHub {
+        owner = "umlaeute";
+        repo = "v4l2loopback";
+        rev = "v0.13.2";
+        hash = "sha256-rcwgOXnhRPTmNKUppupfe/2qNUBDUqVb3TeDbrP5pnU=";
+      };
+    }))
+  ];
+  boot.kernelModules = ["v4l2loopback"];
+  boot.extraModprobeConfig = ''
+    options v4l2loopback devices=1 video_nr=10 exclusive_caps=1 card_label="xiaomi FullHD Webcam"
+  '';
+  security.polkit.enable = true;
+  swapDevices = lib.mkForce [{device = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";}];
+
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -80,15 +97,6 @@ in{
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  #  users.users.istipisti113 = {
-  #    isNormalUser = true;
-  #    description = "Szabo Istvan";
-  #    extraGroups = [ "networkmanager" "wheel" ];
-  #    packages = with pkgs; [
-  #      zsh
-  #    ];
-  #    shell = pkgs.zsh;
-  #  };
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
@@ -107,6 +115,8 @@ in{
     hyprland
     sway
     tidal-hifi
+    spotify
+    playerctl
     transmission-qt
     vlc
     obsidian
@@ -126,7 +136,35 @@ in{
     logmein-hamachi
     tailscale
     vscode-langservers-extracted
+    #nvidia-prime
+    mesa-demos
+    #nvidia-x11
+    #nvidia-settings
+    #nvidia-persistenced
+    gptfdisk
+    gparted
+    fluxbox
+    fish
+    lutris
+    godot
+    unityhub
+    unrar
+    obs-studio-plugins.obs-vkcapture
+    beeper
   ];
+
+  hardware.pulseaudio.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
+
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
+
   services.logmein-hamachi.enable = true;
   services.tailscale.enable = true;
 
@@ -137,30 +175,51 @@ in{
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
+  services.xserver.desktopManager.plasma6.enable = true;
+  services.xserver.displayManager.sddm.enable = false;
+  services.xserver.enable = true;
 
   programs.hyprland.enable = true;
   programs.zsh.enable = true;
+  programs.fish.enable = true;
   programs.sway = {
     enable = true;
     xwayland.enable = true;
+    #waylandbackend = "vulkan";
+    #    extraSessionCommands = ''
+    #      export __NV_PRIME_RENDER_OFFLOAD=1
+    #export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+    #export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    #export __VK_LAYER_NV_optimus=NVIDIA_only
+    #export WLR_RENDERER=vulkan
+    #    '';
   };
 
   services.udev.packages = with pkgs; [via oversteer];
   hardware.bluetooth.enable = true;
   hardware.keyboard.qmk.enable = true;
   hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
+
   hardware.nvidia = {
-    modesetting.enable = true;
+    modesetting.enable = lib.mkDefault true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;
     nvidiaSettings = true;
     prime = {
-      sync.enable = true;
+      sync.enable = false;
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
+        #   offload = {
+        #     enable = true;
+        #     enableOffloadCmd = true;
+        #   };
     };
   };
-  #hardware.nvidia.open = true;
-  #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+  services.xserver.videoDrivers = [ "modesetting" "nouveau" ]; 
   #services.xserver.videoDrivers = [ "nvidia" ]; 
+  #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
   services.blueman.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -176,7 +235,7 @@ in{
   services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 8000 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
@@ -200,6 +259,24 @@ in{
         prime.offload.enableOffloadCmd = lib.mkForce true;
         prime.sync.enable = lib.mkForce false;
       };
+    };
+    nvidia-offload.configuration = {
+      #boot.blacklistedKernelModules = [ "i915" ];
+      hardware.nvidia = {
+        modesetting.enable =  true;
+        nvidiaSettings = true;
+        open = false;
+        prime = {
+          sync.enable = false;
+          intelBusId = "PCI:0:2:0";
+          nvidiaBusId = "PCI:1:0:0";
+          offload = {
+            enable = lib.mkForce true; 
+            enableOffloadCmd = lib.mkForce true;
+          };
+        };
+      };
+      services.xserver.videoDrivers = lib.mkForce [  "nvidia" ]; 
     };
   };
 }

@@ -39,6 +39,7 @@ in {
           "${mod}+space+m" = "exec swaymsg exit";
           "${mod}+q" = "kill";
           "${mod}+Shift+p" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/screenshot.sh'";
+          "${mod}+w" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/waybar_restart.sh'";
 
           #movement
           "${mod}+l" = "exec --no-startup-id bash -c '/home/istipisti113/.config/home-manager/scripts/wrkspc.sh next'"; #workspace to workspace
@@ -148,6 +149,7 @@ in {
     obs-studio
     qpwgraph
     vesktop
+    #newpackage
   ];
 
   programs.bash = {
@@ -247,12 +249,13 @@ in {
 
   programs.waybar = {
     enable = true;
+    style = /home/istipisti113/.config/home-manager/waybar/style.css;
     settings = {
       mainBar = {
         position = "top";
         modules-left = [ "sway/workspaces" "sway/mode" "sway/window" ];
         modules-center = [ "clock" ];
-        modules-right = [ "tray" "battery" "pulseaudio" "backlight" ];
+        modules-right = [ "custom/spotify" "tray" "battery" "memory" "pulseaudio" "backlight" ];
         "sway/workspaces" = {
           persistent_workspaces = {
             "eDP-1" = [1 2 3 4 5];
@@ -267,12 +270,54 @@ in {
           }
         },
         '';
+        backlight = {
+          format = "󰃞 {percent}%";
+          on-scroll-up = "brightnessctl s 1%+";
+          on-scroll-down = "brightnessctl s 1%-";
+        };
+        pulseaudio = {
+          format = "{icon} {volume}%";
+          format-muted = "  Muted";
+          format-icons = {
+            default = ["" "" ""];
+          };
+          scroll-step = 5;
+          on-click = "pavucontrol";
+        };
+        "custom/spotify" = {
+          "format" = "♫ {}";
+          "exec" = "playerctl -p spotify metadata --format '{{artist}} - {{title}}'";
+          "exec-if" = "playerctl -p spotify status 2>/dev/null || echo 'false'";
+          "interval" = 5;
+          "on-click" = "playerctl -p spotify play-pause";
+          "on-click-right" = "playerctl -p spotify next";
+          "on-scroll-up" = "playerctl -p spotify previous";
+          "escape" = true;
+          "max-length" = 50;
+          "tooltip" = false;
+        };
+        memory = {
+          format = "  {percentage}%";
+        };
+        battery = {
+          format = "{icon} {capacity}%";
+          format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+          format-charging = "{icon} 󱐋 {capacity}%";
+          format-plugged = "{icon}  {capacity}%";
+          states = {
+            warning = 30;
+            critical = 15;
+          };
+        };
       };
     };
   };
 
   programs.nixvim = {
-    imports = [/home/istipisti113/.config/home-manager/nixvim/nixvim.nix];
+    imports = [
+      /home/istipisti113/.config/home-manager/nixvim/nixvim.nix
+      #/home/istipisti113/.config/home-manager/beeper.nix
+    ];
   };
 
   programs.neovim = {
