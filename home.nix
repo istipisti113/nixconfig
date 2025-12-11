@@ -135,7 +135,12 @@ in {
     dotnet-sdk_9
     devbox
     omnisharp-roslyn
-    python314
+    #python314
+    python3Full
+    python3Packages.pip
+    python3Packages.opencv4
+    python3.pkgs.tkinter
+    #opencv4
     grim
     slurp
     swappy
@@ -256,6 +261,9 @@ in {
         modules-left = [ "sway/workspaces" "sway/mode" "sway/window" ];
         modules-center = [ "clock" ];
         modules-right = [ "custom/spotify" "tray" "battery" "memory" "pulseaudio" "backlight" ];
+        "sway/window" = {
+          "max-length" = 50;
+        };
         "sway/workspaces" = {
           persistent_workspaces = {
             "eDP-1" = [1 2 3 4 5];

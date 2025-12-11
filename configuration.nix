@@ -9,6 +9,7 @@ let
   nurpkgs = import (builtins.fetchTarball {
     url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
   }) { inherit pkgs; };
+  unstable = import <nixos-unstable> {};
 
 in{
   nix.settings.experimental-features = ["nix-command" "flakes"];
@@ -134,7 +135,7 @@ in{
     clang
     rust-analyzer
     logmein-hamachi
-    tailscale
+    unstable.tailscale
     vscode-langservers-extracted
     #nvidia-prime
     mesa-demos
@@ -167,6 +168,7 @@ in{
 
   services.logmein-hamachi.enable = true;
   services.tailscale.enable = true;
+  services.tailscale.package = unstable.tailscale;
 
   programs.steam = {
     enable = true;
