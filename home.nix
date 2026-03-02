@@ -71,6 +71,11 @@ in {
           scale = "1";
           position = "1920 0";
         };
+        DP-1 = {
+          scale = "1";
+          position = "-1280 0";
+          transform = "90";
+        };
       };
       workspaceOutputAssign = [
         { workspace = "6"; output = "HDMI-A-1"; }
@@ -99,6 +104,7 @@ in {
   home.packages = with pkgs; [
     htop
     fortune
+    cowsay
     git
     git-credential-manager
     alacritty
@@ -107,8 +113,8 @@ in {
     pavucontrol
     exercism
     oversteer
-    solana-cli
-    anchor
+    #solana-cli
+    #anchor
     rustup
     tree-sitter
     nodejs
@@ -123,9 +129,9 @@ in {
     nautilus
     prismlauncher
     #helix
-    codecrafters-cli
+    #codecrafters-cli
     #rpi-imager
-    awesome
+    #awesome
     gimp
     xorg.xinit
     xorg.xauth
@@ -134,12 +140,12 @@ in {
     #dotnet-sdk
     dotnet-sdk_9
     devbox
-    omnisharp-roslyn
+    #omnisharp-roslyn
     #python314
     python3Full
     python3Packages.pip
-    python3Packages.opencv4
-    python3.pkgs.tkinter
+    #python3Packages.opencv4
+    #python3.pkgs.tkinter
     #opencv4
     grim
     slurp
@@ -155,6 +161,12 @@ in {
     qpwgraph
     vesktop
     #newpackage
+    cargo-cross #rust cross compile
+    tor-browser
+    busybox
+    sdrpp
+    speedtest-cli
+    element-desktop
   ];
 
   programs.bash = {

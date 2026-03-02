@@ -9,7 +9,9 @@ let
   nurpkgs = import (builtins.fetchTarball {
     url = "https://github.com/nix-community/NUR/archive/main.tar.gz";
   }) { inherit pkgs; };
-  unstable = import <nixos-unstable> {};
+  unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/tarball/nixos-unstable") {
+    config.allowUnfree = true;
+  };
 
 in{
   nix.settings.experimental-features = ["nix-command" "flakes"];
@@ -33,7 +35,7 @@ in{
     ];
   users.users.istipisti113 = {
     isNormalUser = true;
-    extraGroups = [ "video" "wheel" "input" "networkmanager" "bluetooth" "adbusers"];
+    extraGroups = [ "video" "wheel" "input" "networkmanager" "bluetooth" "adbusers" "plugdev" "dialout"];
     shell = pkgs.fish;
   };
   home-manager.backupFileExtension = "backup";
@@ -56,14 +58,24 @@ in{
     }))
   ];
   boot.kernelModules = ["v4l2loopback"];
+  boot.kernelParams = ["modpbrobe.blacklist=dvb_usb_rtl28xxu"];
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=10 exclusive_caps=1 card_label="xiaomi FullHD Webcam"
   '';
+
+  security.wrappers = {
+    bwrap = {
+      owner = "root";
+      group = "root";
+      source = "${pkgs.bubblewrap}/bin/bwrap";
+      setuid = true;
+    };
+  };
   security.polkit.enable = true;
   swapDevices = lib.mkForce [{device = "/dev/disk/by-uuid/fcf14eaf-ee88-4a23-838a-5b23386b8187";}];
 
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nixtop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -103,6 +115,9 @@ in{
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "ventoy-1.1.05"
+  ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -116,7 +131,7 @@ in{
     hyprland
     sway
     tidal-hifi
-    spotify
+    unstable.spotify
     playerctl
     transmission-qt
     vlc
@@ -136,6 +151,7 @@ in{
     rust-analyzer
     logmein-hamachi
     unstable.tailscale
+    discord-screenaudio
     vscode-langservers-extracted
     #nvidia-prime
     mesa-demos
@@ -152,7 +168,19 @@ in{
     unrar
     obs-studio-plugins.obs-vkcapture
     beeper
+    tmux
+    vial
+    unstable.codecrafters-cli
+    teamviewer
+
+    libusb1
+    rtl-sdr
+    gqrx
+    ventoy
+    pix
+    direnv
   ];
+  environment.sessionVariables = { DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet"; };
 
   hardware.pulseaudio.enable = false;
   services.pipewire = {
@@ -165,10 +193,12 @@ in{
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
   ];
+  services.teamviewer.enable = true;
 
   services.logmein-hamachi.enable = true;
   services.tailscale.enable = true;
   services.tailscale.package = unstable.tailscale;
+  services.mullvad-vpn.enable = true;
 
   programs.steam = {
     enable = true;
@@ -180,6 +210,11 @@ in{
   services.xserver.desktopManager.plasma6.enable = true;
   services.xserver.displayManager.sddm.enable = false;
   services.xserver.enable = true;
+
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
 
   programs.hyprland.enable = true;
   programs.zsh.enable = true;
@@ -197,7 +232,8 @@ in{
     #    '';
   };
 
-  services.udev.packages = with pkgs; [via oversteer];
+  hardware.rtl-sdr.enable = true;
+  services.udev.packages = with pkgs; [via oversteer rtl-sdr];
   hardware.bluetooth.enable = true;
   hardware.keyboard.qmk.enable = true;
   hardware.graphics.enable = true;

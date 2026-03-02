@@ -17,6 +17,7 @@
     relativenumber = true;
     shiftwidth = 2;
     expandtab = true;
+    tabstop = 2;
     smartindent = true;
     undofile = true;
     termguicolors = true;
@@ -45,7 +46,7 @@
 
   plugins = {
     autoclose.enable = true;
-    flutter-tools.enable = true;
+    flutter-tools.enable = false;
     fugitive.enable = true;
     web-devicons.enable = true;
     #conform-nvim = {
@@ -108,17 +109,17 @@
         lua = ["luacheck"];
         nix = ["nix"];
         #rust = ["rust-analyzer"];
-        dart = ["flutter-tools"];
+        #dart = ["flutter-tools"];
       };
     };
   };
 
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
-    flutter-tools-nvim
+    #flutter-tools-nvim
   ];
   extraPackages = with pkgs; [
-    typescript-language-server
+    #typescript-language-server
   ];
   extraConfigLua = ''
 
@@ -225,12 +226,9 @@
   --on_attach = function(client, bufnr)
   --  -- optional: keymaps, etc.
   --end,
-  flags = { debounce_text_changes = 150 },
+  --flags = { debounce_text_changes = 150 },
   --}
 
-  require("flutter-tools").setup()
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
 
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities.textDocument.completion.completionItem.snippetSupport = true
